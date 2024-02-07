@@ -1,82 +1,123 @@
-# This config was automatically generated from your source code
-# Stacks detected: deps:node:.
 version: 2.1
-orbs:
-  node: circleci/node@5
-jobs:
-  test-node:
-    # Install node dependencies and run tests
-    executor: node/default
-    steps:
-      - checkout
-      - node/install-packages:
-          pkg-manager: npm
-      - run:
-          name: Print node install help instructions
-          command: |-
-            echo "One cause for node package install failure is if you have private repositories that it can't reach
-            One way to fix this for private npm packages:
-              1. Use the npm CLI's \"login\" command to create a token (usually saved in your user's \"~/.npmrc\" file)
-                For more info, see https://circleci.com/blog/publishing-npm-packages-using-circleci-2-0/#:~:text=set%20the%20%24npm_token%20environment%20variable%20in%20circleci
-              2. Add a NPM_TOKEN to an org context
-                For info on how to use contexts, see https://circleci.com/docs/contexts/
-              3. Add a .circleci/config.yml to your repository or use this config.yml as a starting template
-              4. Configure the jobs to use the context that includes NPM_TOKEN
-              5. Add a step to inject your NPM_TOKEN environment variable into npm before \"install-packages\"
-                For an example, see https://circleci.com/blog/publishing-npm-packages-using-circleci-2-0/#:~:text=the%20deploy%20job%20has%20several%20steps%20that%20run%20to%20authenticate%20with%20and%20publish%20to"
-          when: on_fail
-      - run:
-          name: Run tests
-          command: npm test --passWithNoTests
-  build-node:
-    # Build node project
-    executor: node/default
-    steps:
-      - checkout
-      - node/install-packages:
-          pkg-manager: npm
-      - run:
-          name: Print node install help instructions
-          command: |-
-            echo "One cause for node package install failure is if you have private repositories that it can't reach
-            One way to fix this for private npm packages:
-              1. Use the npm CLI's \"login\" command to create a token (usually saved in your user's \"~/.npmrc\" file)
-                For more info, see https://circleci.com/blog/publishing-npm-packages-using-circleci-2-0/#:~:text=set%20the%20%24npm_token%20environment%20variable%20in%20circleci
-              2. Add a NPM_TOKEN to an org context
-                For info on how to use contexts, see https://circleci.com/docs/contexts/
-              3. Add a .circleci/config.yml to your repository or use this config.yml as a starting template
-              4. Configure the jobs to use the context that includes NPM_TOKEN
-              5. Add a step to inject your NPM_TOKEN environment variable into npm before \"install-packages\"
-                For an example, see https://circleci.com/blog/publishing-npm-packages-using-circleci-2-0/#:~:text=the%20deploy%20job%20has%20several%20steps%20that%20run%20to%20authenticate%20with%20and%20publish%20to"
-          when: on_fail
-      - run:
-          command: npm run build
-      - run:
-          name: Create the ~/artifacts directory if it doesn't exist
-          command: mkdir -p ~/artifacts
-      # Copy output to artifacts dir
-      - run:
-          name: Copy artifacts
-          command: cp -R build dist public .output .next .docusaurus ~/artifacts 2>/dev/null || true
-      - store_artifacts:
-          path: ~/artifacts
-          destination: node-build
-  deploy:
-    # This is an example deploy job, not actually used by the workflow
+
+executors:
+  app-executor:
     docker:
-      - image: cimg/base:stable
+      - image: circleci/node:13.12.0
+    working_directory: ~/repo
+
+aliases:
+  - &show-current-branch-name
+    run:
+      name: Show current branch
+      command: echo ${CIRCLE_BRANCH}
+
+  - &restore-cache
+    restore_cache:
+      keys:
+        - app-{{checksum "package.json"}}
+        - app-
+
+  - &install-dependencies
+    run: 
+      name: Install dependencies
+      command: npm install
+
+  - &save-cache
+    save_cache:
+      paths:
+        - node_modules
+      key: app-{{checksum "package.json"}}
+
+  - &install-aws-cli
+    run:
+      name: Installing AWS CLI
+      working_directory: /
+      command: |
+        sudo apt-get -y -qq update
+        sudo apt-get install -y awscli
+        sudo apt-get install -y python-pip python-dev build-essential
+
+  - &build-project
+    run:
+      name: Build Project
+      command: | 
+        npm install
+        npm run build
+        cd build 
+        zip ../build.zip -r * .[^.]*
+        echo "Build successful"
+
+jobs:
+  build:
+    executor: app-executor
     steps:
-      # Replace this with steps to deploy to users
+      - checkout
+      - *show-current-branch-name
+      - *restore-cache
+      - *install-dependencies
+      - *save-cache
+
+  deploy-to-aws-s3:
+    executor: app-executor
+    steps:
+      - checkout
+      - *show-current-branch-name
+      - *install-aws-cli
+      - *build-project
       - run:
-          name: deploy
-          command: '#e.g. ./deploy.sh'
+          name: Deploy to AWS s3
+          command: |
+            if ["${CIRCLE_BRANCH}"  == "main"]
+            then 
+              aws --region ${AWS_REGION} s3 sync ~/repo/build s3://${AWS_BUCKET_PRODUCTION} --delete
+            elif ["${CIRCLE_BRANCH}"  == "staging"]
+            then 
+              aws --region ${AWS_REGION} s3 sync ~/repo/build s3://${AWS_BUCKET_STAGING} --delete
+            else
+              aws --region ${AWS_REGION} s3 sync ~/repo/build s3://${AWS_BUCKET_DEVELOPMENT} --delete
+            fi
+            
+  deploy-to-aws-cloudfront:
+    executor: app-executor
+    steps:
+      - checkout
+      - *show-current-branch-name
+      - *install-aws-cli
+      - *build-project
+      - run:
+          name: Deploy to AWS Cloudfront
+          command: |
+            aws configure set preview.cloudfront true
+            if ["${CIRCLE_BRANCH}"  == "main"]
+            then 
+              aws cloudfront create-invalidation --distribution-id ${PRODUCTION_DISTRIBUTION} --paths /\*
+            elif ["${CIRCLE_BRANCH}"  == "staging"]
+            then 
+              aws cloudfront create-invalidation --distribution-id ${STAGE_DISTRIBUTION} --paths /\*
+            else
+             aws cloudfront create-invalidation --distribution-id ${DEV_DISTRIBUTION} --paths /\*
+            fi
+
 workflows:
-  build-and-test:
+  build_and_deploy:
     jobs:
-      - test-node
-      - build-node:
+      - build
+      - deploy-to-aws-s3:
           requires:
-            - test-node
-    # - deploy:
-    #     requires:
-    #       - build-node
+            - build
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - main
+      - deploy-to-aws-cloudfront:
+          requires:
+            - deploy-to-aws-s3
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - main
