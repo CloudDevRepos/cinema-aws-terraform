@@ -29,9 +29,9 @@ This project was built using React for application development, Redux for state 
 - Go to permissions -> `scope` and add `chat:write | files:write` and then install to workspace under `OAuth token section`.
 - Add the token to circleci's environment variables -> `SLACK_ACCESS_TOKEN`.
 
-### Docker
-
 ### Terraform
+
+### Docker
 
 ### Sentry
 
