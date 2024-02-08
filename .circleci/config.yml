@@ -177,7 +177,7 @@ jobs:
                 },
                 {
                   "type": "actions",
-                  "elements" [
+                  "elements": [
                     {
                       "type": "button",
                       "text": {
