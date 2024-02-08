@@ -128,6 +128,7 @@ jobs:
 
   test:
     executor: app-executor
+    steps:
       - run: echo "test my app"
 
   notify-via-slack:
