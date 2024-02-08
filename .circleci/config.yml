@@ -4,7 +4,6 @@ executors:
   app-executor:
     docker:
       - image: circleci/node:latest
-      - run: node version
     working_directory: ~/repo
 
 aliases:
