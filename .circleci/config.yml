@@ -133,7 +133,7 @@ workflows:
                 - staging
                 - main
 
-       - prettier:
+      - prettier:
           requires:
             - build
           filters:
