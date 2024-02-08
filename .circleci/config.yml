@@ -141,12 +141,12 @@ jobs:
           template: ""
           custom: | 
             {
-              "blocks":[
+              "blocks": [
                 {
                   "type": "header",
                   "text": {
-                    "type": " plain_text",
-                    "text": "${CIRCLE_BRANCH} branch development to aws s3 and cloudfront is complete. 👍",
+                    "type": "plain_text",
+                    "text": "${CIRCLE_BRANCH} branch deployment to aws s3 and cloudfront is complete. 👍",
                     "emoji": true
                   }
                 },
@@ -154,24 +154,24 @@ jobs:
                   "type": "section",
                   "fields": [
                     {
-                    "type": "mrkdwn",
-                    "text": "*Project:*:\n$CIRCLE_PROJECT_REPONAME"
+                      "type": "mrkdwn",
+                      "text": "*Project*:\n$CIRCLE_PROJECT_REPONAME"
                     },
                     {
                       "type": "mrkdwn",
-                    "text": "*Branch:*:\n$CIRCLE_BRANCH"
-                    },
-                    {
-                    "type": "mrkdwn",
-                    "text": "*When:*:\n$(date + '%m/%d/%Y %T ')"
-                    },
-                    {
-                    "type": "mrkdwn",
-                    "text": "*Project:*:\n$CIRCLE_BUILD_NUM"
+                      "text": "*Branch*:\n$CIRCLE_BRANCH"
                     },
                     {
                       "type": "mrkdwn",
-                    "text": "*Author:*:\n$CIRCLE_PROJECT_USERNAME"
+                      "text": "*When*:\n$(date +'%m/%d/%Y %T')"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Build*:\n$CIRCLE_BUILD_NUM"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Author*:\n$CIRCLE_PROJECT_USERNAME"
                     }
                   ]
                 },
