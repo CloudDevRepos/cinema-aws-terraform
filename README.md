@@ -5,6 +5,7 @@ This project was built using React for application development, Redux for state 
 - Create Public and Private keys for the project.
 - Paste the public key in the Project Repo -> `Settings` -> `add deploy key`.
 - Paste the Private key in the CircleCI settings for the project.
+- Config different environmental variables for AWS s3 and CloudFront.
 
 ### AWS s3
 - Create an IAM user then add permissions using environmental variables on CircleCI.
