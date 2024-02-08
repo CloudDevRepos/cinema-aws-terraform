@@ -18,10 +18,20 @@ This project was built using React for application development, Redux for state 
 - Create environmental variables for development, staging and production -> `CircleCI`.
 - Invalidations can be added using code.
 
+### Slack
+- Create a new workspace on Slack for the project and add a channel.
+- Navigate to settings of the `workspace` -> `setting & administration` -> `manage app`.
+- Search from the `app directory` circleci and add it -> `add channel` -> `then copy the hook URL`.
+- Navigate to circleci -> `project's settings` -> `webhooks` and `add a webhook URL from slack`.
+- Add a `secret key` -> `select job completed` and `then test with a ping`.
+##### Slack Integration
+- Navigate to the `project settings` -> `Slack integration` and `create a slack application`.
+- Go to permissions -> `scope` and add `chat:write | files:write` and then install to workspace under `OAuth token section`.
+- Add the token to circleci's environment variables -> `SLACK_ACCESS_TOKEN`.
+
 ### Docker
 
 ### Terraform
 
 ### Sentry
 
-### Slack
