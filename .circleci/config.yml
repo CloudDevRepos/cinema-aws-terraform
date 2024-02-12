@@ -134,7 +134,7 @@ jobs:
           terraform workspace select ${CIRCLE_BRANCH}
           terraform apply --auto-approve
           terraform output cinema_aws_terraform_outputs > ../cinema_bucket_name.txt
-          terraform output aws_cloudfront_distribution_id > ../cloudfront_distribution_id.txt
+          terraform output aws_cloudfront_distribution_id > ../aws_cloudfront_distribution_id.txt
 
     - persist_to_workspace:
         root: ./
