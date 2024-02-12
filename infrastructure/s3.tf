@@ -64,7 +64,7 @@ resource "aws_s3_bucket_website_configuration" "cinema_aws_terraform_website_hos
 
 # Bucket policy -> Cloudfront configuration
 data "aws_iam_policy_document" "data_bucket_policy" {
-  statement { 
+  statement {
     actions = ["s3:GetObject"]
 
     resources = [
