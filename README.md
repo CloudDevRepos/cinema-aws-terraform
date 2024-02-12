@@ -1,5 +1,6 @@
 ## Cinema-AWS-Terraform
-This project was built using React for application development, Redux for state management, Git for version control, CircleCI as a pipeline for CI/CD, AWS-s3 for storing our static application, AWS Cloudfront for content delivery, Slack for progress reporting on deployment,Sentry for monitoring and Terraform .
+This project was built using React for application development, Redux for state management, Git for version control, CircleCI as a pipeline for CI/CD, AWS-s3 for storing our static application, AWS Cloudfront for content delivery, Slack for progress reporting on deployment,Sentry for monitoring and Terraform to provision resources.
+
 ### CircleCI
 - For Continuous Integration and Continuous Delivery using Github.
 - Create Public and Private keys for the project.
@@ -30,6 +31,8 @@ This project was built using React for application development, Redux for state 
 - Add the token to circleci's environment variables -> `SLACK_ACCESS_TOKEN`.
 
 ### Terraform
+ - Update your aws credentials: new IAM user for terraform to connect to AWS.
+ - Add the created user's credentials to your local system's terminal -> `export AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY `.
 
 ### Docker
 
