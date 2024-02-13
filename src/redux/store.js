@@ -7,10 +7,6 @@ import rootReducers from './reducers';
 const initialState = {};
 const middleware = [thunk];
 
-const store = createStore(
-  rootReducers,
-  initialState,
-  composeWithDevTools(applyMiddleware(...middleware))
-);
+const store = createStore(rootReducers, initialState, composeWithDevTools(applyMiddleware(...middleware)));
 
 export default store;
