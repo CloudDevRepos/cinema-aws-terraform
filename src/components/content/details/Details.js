@@ -1,3 +1,4 @@
+/* eslint-disable multiline-ternary */
 import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { useParams, useLocation } from 'react-router-dom';
