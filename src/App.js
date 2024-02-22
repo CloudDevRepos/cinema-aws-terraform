@@ -1,18 +1,49 @@
-import { Provider } from 'react-redux';
-import store from './redux/store.js';
+import { useEffect } from 'react';
+import { BrowserRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 import './App.scss';
-import Header from './components/header/Header.js';
+import Header from './components/header/Header';
+import Main from './components/main/Main';
+import Details from './components/content/details/Details';
+import ErrorBoundary from './components/error/ErrorBoundary';
+import { appRoutes } from './redux/actions/route';
+import { AppRoutes } from './route';
 
-const App = () => {
+const App = (props) => {
+  const { appRoutes } = props;
+  const routesArray = [
+    {
+      id: 1,
+      path: '/',
+      component: Main
+    },
+    {
+      id: 2,
+      path: '/:id/:name/details',
+      component: Details
+    }
+  ];
+
+  useEffect(() => {
+    appRoutes(routesArray);
+  }, [routesArray, appRoutes]);
+
   return (
-    <Provider store={store}>
-      <Header />
-      <div className="app">
-        <h1>Redux</h1>
-      </div>
-    </Provider>
+    <div className="app">
+      <BrowserRouter>
+        <ErrorBoundary>
+          <Header />
+        </ErrorBoundary>
+        <AppRoutes />
+      </BrowserRouter>
+    </div>
   );
 };
 
-export default App;
+App.propTypes = {
+  appRoutes: PropTypes.func
+};
+
+export default connect(null, { appRoutes })(App);
