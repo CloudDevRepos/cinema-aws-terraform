@@ -53,11 +53,13 @@ const Main = (props) => {
     <>
       {!errors.message && !errors.statusCode && (
         <div className="main" ref={mainRef} onScroll={handleScroll}>
-          {loading ? (
+          {loading
+            ? (
             <Spinner />
-          ) : (
+              )
+            : (
             <>{searchResult && searchResult.length === 0 ? <MainContent /> : <SearchResult />}</>
-          )}
+              )}
           <div ref={bottomLineRef}></div>
         </div>
       )}

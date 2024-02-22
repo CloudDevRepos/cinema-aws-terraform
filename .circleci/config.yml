@@ -104,7 +104,7 @@ jobs:
     steps:
       - checkout
       - *show-current-branch-name
-      - *restore_cache 
+      - *restore-cache 
       - run:
           name: Run unit tests
           command: npm run test
