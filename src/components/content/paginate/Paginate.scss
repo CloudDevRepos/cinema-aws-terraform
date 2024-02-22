@@ -1,0 +1,21 @@
+.paginate-button{
+  background-color: #dd003f;
+  padding: 8px 15px;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  margin: 0 15px;
+  outline: none !important;
+}
+
+.disable{
+  cursor: one;
+  pointer-events: none;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.pageCount{
+  color: white;
+  margin: 0 5px;
+  padding: 10px 5px;
+}
